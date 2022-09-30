@@ -7,5 +7,4 @@
 library gg_time_controller;
 
 export 'src/gg_time_controller.dart';
-export 'src/gg_time_stamp.dart';
 export 'src/gg_periodic_timer.dart';

@@ -10,7 +10,6 @@ import 'dart:async';
 import 'package:gg_value/gg_value.dart';
 
 import 'gg_periodic_timer.dart';
-import 'gg_time_stamp.dart';
 import 'typedefs.dart';
 
 // .............................................................................
@@ -23,6 +22,14 @@ enum TransportState {
   jumpingBackward,
   animatingForward,
   animatingBackward,
+}
+
+// .............................................................................
+typedef OnTimeStamp = Function(Seconds);
+
+// .............................................................................
+extension GgDurationExtension on Duration {
+  Seconds get secondsD => inMicroseconds / 1000000.0;
 }
 
 // .............................................................................
@@ -48,7 +55,7 @@ class GgTimeController {
   static const defaultFrameRate = 60.0;
 
   /// The default duration between two delivered time stamps
-  static Duration get defaultFrameDuration =>
+  static Seconds get defaultFrameDuration =>
       GgTimeController._calcFrameDuration(defaultFrameRate);
 
   /// This function will periodically called with updated timestamps
@@ -61,10 +68,10 @@ class GgTimeController {
   final double frameRate;
 
   /// How long does it take between two emits?
-  final Duration frameDuration;
+  final Seconds frameDuration;
 
   /// Returns the current time in seconds.
-  Duration get time => _time;
+  Seconds get time => _time;
 
   /// Starts playing
   void play() {
@@ -96,13 +103,13 @@ class GgTimeController {
     _stopwatch.stop();
     _timer.stop();
     _stopwatch.reset();
-    _lastTime = Duration.zero;
-    _updateStopwatchOffset(Duration.zero);
+    _lastTime = 0.0;
+    _updateStopwatchOffset(0.0);
     _timerFired();
   }
 
   /// Jump to a given time
-  void jumpTo({required Duration time}) {
+  void jumpTo({required Seconds time}) {
     if (time == _clockTime) {
       return;
     }
@@ -110,7 +117,7 @@ class GgTimeController {
     final stateBefore = _state.value;
     _state.value = _jumpState(time);
 
-    _state.value = time == Duration.zero ? stateBefore : TransportState.paused;
+    _state.value = time == 0.0 ? stateBefore : TransportState.paused;
     _lastTime = time;
     _updateStopwatchOffset(time);
     _timerFired();
@@ -118,12 +125,12 @@ class GgTimeController {
 
   /// Animate to a given time in a given duration.
   Future<void> animateTo({
-    required Duration targetTime,
+    required Seconds targetTime,
     Duration animationDuration = defaultAnimationDuration,
   }) async {
-    _animationTargetTime = targetTime.inMicroseconds.toDouble();
-    _animationStartTime = _clockTime.inMicroseconds.toDouble();
-    _animationDuration = animationDuration.inMicroseconds.toDouble();
+    _animationTargetTime = targetTime;
+    _animationStartTime = _clockTime;
+    _animationDuration = animationDuration.secondsD;
 
     // If an animation is already in progress, we are done here.
     if (_isAnimating != null) {
@@ -155,7 +162,7 @@ class GgTimeController {
     }
 
     // Switch to paused, if state was stopped before and time is not 0
-    if (stateBefore == TransportState.stopped && _lastTime != Duration.zero) {
+    if (stateBefore == TransportState.stopped && _lastTime != 0.0) {
       _state.value = TransportState.paused;
     } else {
       _state.value = stateBefore;
@@ -175,13 +182,13 @@ class GgTimeController {
 
   // ...........................................................................
   final List<Function()> _dispose = [];
-  Duration _lastTime = Duration.zero;
-  Duration get _clockTime {
-    return _stopwatch.elapsed - _stopwatchOffset;
+  Seconds _lastTime = 0.0;
+  Seconds get _clockTime {
+    return _stopwatch.elapsed.secondsD - _stopwatchOffset;
   }
 
   // ...........................................................................
-  Duration get _time {
+  Seconds get _time {
     switch (state.value) {
       case TransportState.playing:
         return _clockTime;
@@ -194,7 +201,7 @@ class GgTimeController {
   }
 
   late GgPeriodicTimer _timer;
-  Duration _stopwatchOffset = Duration.zero;
+  Seconds _stopwatchOffset = 0.0;
 
   late Stopwatch _stopwatch;
 
@@ -209,7 +216,7 @@ class GgTimeController {
     _animate();
     _lastTime = state.value == TransportState.playing ? _clockTime : _lastTime;
 
-    onTimeStamp(GgTimeStamp(time: _lastTime));
+    onTimeStamp(_lastTime);
   }
 
   // ...........................................................................
@@ -218,7 +225,8 @@ class GgTimeController {
       _timer = timer ??
           GgPeriodicTimer(
             onTimerFired: _timerFired,
-            interval: frameDuration,
+            interval:
+                Duration(microseconds: (frameDuration * 1000 * 1000).toInt()),
           );
       _dispose.add(_timer.dispose);
     }
@@ -239,30 +247,30 @@ class GgTimeController {
   }
 
   // ...........................................................................
-  TransportState _jumpState(Duration newTime) => newTime > _clockTime
+  TransportState _jumpState(Seconds newTime) => newTime > _clockTime
       ? TransportState.jumpingForward
       : TransportState.jumpingBackward;
 
   // ...........................................................................
-  TransportState _animateState(Duration newTime) => newTime > _clockTime
+  TransportState _animateState(Seconds newTime) => newTime > _clockTime
       ? TransportState.animatingForward
       : TransportState.animatingBackward;
 
   // ...........................................................................
-  MicroSeconds _animationTargetTime = 0;
-  MicroSeconds _animationDuration = 0;
-  MicroSeconds _animationStartTime = 0;
+  Seconds _animationTargetTime = 0;
+  Seconds _animationDuration = 0;
+  Seconds _animationStartTime = 0;
   Completer? _isAnimating;
 
   // ...........................................................................
-  Duration get _animatedTime {
+  Seconds get _animatedTime {
     final animatingForward = state.value == TransportState.animatingForward;
     final duration = animatingForward
         ? _animationTargetTime - _animationStartTime
         : _animationStartTime - _animationTargetTime;
 
     // Calc progress
-    final timeProgress = _clockTime.inMicroseconds - _animationStartTime;
+    final timeProgress = _clockTime - _animationStartTime;
     MicroSeconds progress = timeProgress / _animationDuration;
 
     if (!animatingForward) {
@@ -270,9 +278,9 @@ class GgTimeController {
     }
 
     // Result
-    final result = (_animationStartTime + duration * progress).toInt();
+    final result = _animationStartTime + duration * progress;
 
-    return Duration(microseconds: result.toInt());
+    return result;
   }
 
   // ........................................................ ...................
@@ -282,13 +290,13 @@ class GgTimeController {
     }
 
     // Animation finished?
-    final clockTime = _clockTime.inMicroseconds;
+    final clockTime = _clockTime;
     final isReady = (clockTime - _animationStartTime) >= _animationDuration;
 
     if (isReady) {
       _isAnimating!.complete(null);
       _isAnimating = null;
-      _lastTime = Duration(microseconds: _animationTargetTime.toInt());
+      _lastTime = _animationTargetTime;
       _updateStopwatchOffset(_lastTime);
       _animationTargetTime = 0;
 
@@ -300,12 +308,11 @@ class GgTimeController {
   }
 
   // ...........................................................................
-  static Duration _calcFrameDuration(double frameRate) =>
-      Duration(microseconds: ((1.0 / frameRate) * 1000 * 1000).toInt());
+  static Seconds _calcFrameDuration(double frameRate) => 1.0 / frameRate;
 
   // ...........................................................................
-  void _updateStopwatchOffset(Duration expectedTime) {
-    _stopwatchOffset = _stopwatch.elapsed - expectedTime;
+  void _updateStopwatchOffset(Seconds expectedTime) {
+    _stopwatchOffset = _stopwatch.elapsed.secondsD - expectedTime;
   }
 }
 

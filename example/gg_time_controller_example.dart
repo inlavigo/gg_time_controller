@@ -1,14 +1,18 @@
 import 'dart:async';
 
 import 'package:gg_time_controller/gg_time_controller.dart';
+import 'package:gg_time_controller/src/typedefs.dart';
 
 void main() async {
   void log(String str) => print('\n$str:');
+  final fiveFrames = Duration(
+      microseconds:
+          ((GgTimeController.defaultFrameDuration * 5 * 1000 * 1000).toInt()));
 
   /// Listen to time stamps
-  void onTimeStamp(GgTimeStamp timeStamp) {
+  void onTimeStamp(MilliSeconds timeStamp) {
     scheduleMicrotask(
-      () => print('    time: ${timeStamp.time.inMilliseconds}'),
+      () => print('    time: $timeStamp'),
     );
   }
 
@@ -25,7 +29,7 @@ void main() async {
   timeController.play();
 
   log('Wait for five frames');
-  await Future.delayed(GgTimeController.defaultFrameDuration * 5);
+  await Future.delayed(fiveFrames);
 
   // Output:
   //   state: playing
@@ -42,7 +46,7 @@ void main() async {
   //   time: 85
 
   log('Wait for five frames => No output because controller is paused');
-  await Future.delayed(GgTimeController.defaultFrameDuration * 5);
+  await Future.delayed(fiveFrames);
 
   // Output:
   //   state: paused
@@ -56,7 +60,7 @@ void main() async {
   //     time: 0
 
   log('Jump to 10s');
-  timeController.jumpTo(time: const Duration(seconds: 10));
+  timeController.jumpTo(time: 10.0);
   await Future.delayed(Duration.zero);
 
   // Output:
@@ -67,7 +71,7 @@ void main() async {
 
   log('Wait for five frames');
 
-  await Future.delayed(GgTimeController.defaultFrameDuration * 5);
+  await Future.delayed(fiveFrames);
   timeController.pause();
 
   // Output:
@@ -82,10 +86,10 @@ void main() async {
 
   log('Animate to 20s within 100ms');
   await timeController.animateTo(
-    targetTime: const Duration(seconds: 20),
+    targetTime: 20.0,
     animationDuration: const Duration(milliseconds: 100),
   );
-  await Future.delayed(GgTimeController.defaultFrameDuration * 5);
+  await Future.delayed(fiveFrames);
 
   // Output:
   //   state: animatingForward
@@ -98,7 +102,7 @@ void main() async {
 
   log('Animate back 10s within 100ms');
   await timeController.animateTo(
-    targetTime: const Duration(seconds: 10),
+    targetTime: 10.0,
     animationDuration: const Duration(milliseconds: 100),
   );
 
