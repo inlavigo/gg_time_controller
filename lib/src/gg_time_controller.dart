@@ -33,6 +33,12 @@ extension GgDurationExtension on Duration {
 }
 
 // .............................................................................
+extension SecondsToDuration on Seconds {
+  Duration get toDuration =>
+      Duration(microseconds: (this * 1000 * 1000).toInt());
+}
+
+// .............................................................................
 /// Delivers time stamps. Can be started, paused, stopped. Jumping as well
 /// animating to a given time is possible.
 class GgTimeController {
@@ -41,11 +47,11 @@ class GgTimeController {
     required this.onTimeStamp,
     this.frameRate = defaultFrameRate,
     GgPeriodicTimer? timer,
-    Stopwatch? stopWatch,
+    Stopwatch? stopwatch,
   }) : frameDuration = _calcFrameDuration(frameRate) {
     _init();
     _initTimer(timer);
-    _initStopWatch(stopWatch);
+    _initStopwatch(stopwatch);
   }
 
   /// The default animation duration used by [animateTo]
@@ -233,7 +239,7 @@ class GgTimeController {
   }
 
   // ...........................................................................
-  void _initStopWatch(Stopwatch? stopwatch) {
+  void _initStopwatch(Stopwatch? stopwatch) {
     _stopwatch = stopwatch ?? Stopwatch();
   }
 
@@ -323,5 +329,5 @@ GgTimeController exampleTimeController({
 }) =>
     GgTimeController(
       onTimeStamp: onTimeStamp ?? (_) {}, // coverage:ignore-line
-      stopWatch: stopwatch,
+      stopwatch: stopwatch,
     );

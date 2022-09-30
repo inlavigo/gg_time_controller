@@ -7,7 +7,3 @@
 typedef Seconds = double;
 typedef MilliSeconds = double;
 typedef MicroSeconds = double;
-
-extension SecondsToDuration on Seconds {
-  Duration get duration => Duration(microseconds: (this * 1000 * 1000).toInt());
-}

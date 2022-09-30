@@ -83,8 +83,8 @@ void main() {
   // ...........................................................................
   void expectTimeStamp(Duration expected) {
     fake.flushMicrotasks();
-    expect(timeStamp.duration, expected);
-    expect(timeController.time.duration, expected);
+    expect(timeStamp.toDuration, expected);
+    expect(timeController.time.toDuration, expected);
     states.clear();
   }
 
@@ -168,7 +168,7 @@ void main() {
           // Jumping forward should first set state to "jumpingForward"
           // and then back to the previous state which is "paused".
           timeController.jumpTo(time: targetTime);
-          expectedTime = targetTime.duration;
+          expectedTime = targetTime.toDuration;
 
           expectStates([
             TransportState.jumpingForward,
@@ -193,7 +193,7 @@ void main() {
           // when state was stopped before.
           timeController.stop();
           timeController.jumpTo(time: targetTime);
-          expectedTime = targetTime.duration;
+          expectedTime = targetTime.toDuration;
 
           expectStates([
             TransportState.stopped,
@@ -240,19 +240,19 @@ void main() {
           var timeIncrement = targetTime * 0.25;
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 1/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 2/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 3/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 4/4
 
           // After animation the state goes back to paused.
@@ -273,7 +273,7 @@ void main() {
 
           // ...............................
           // Initially we are at target time
-          var expectedTime = targetTime.duration;
+          var expectedTime = targetTime.toDuration;
           timeController.pause();
           timeController.jumpTo(time: targetTime);
           fake.flushMicrotasks();
@@ -296,19 +296,19 @@ void main() {
           var timeIncrement = -targetTime * 0.25;
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 1/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 2/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 3/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 4/4
 
           // After animation the state goes back to paused.
@@ -345,11 +345,11 @@ void main() {
           var timeIncrement = targetTime * 0.25;
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 1/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 2/4
 
           // While the animation is running,
@@ -365,19 +365,19 @@ void main() {
 
           // Check if the right frames are emitted
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 1/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 2/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 3/4
 
           elapse(animationIncrement);
-          expectedTime += timeIncrement.duration;
+          expectedTime += timeIncrement.toDuration;
           expectTimeStamp(expectedTime); // 4/4
 
           dispose(fake);
@@ -430,7 +430,7 @@ void main() {
           // After animation state should switched to paused
           expectState(TransportState.playing);
 
-          final timeBefore = timeController.time.duration;
+          final timeBefore = timeController.time.toDuration;
           elapseOneFrame();
 
           expectTimeStamp(timeBefore + frameDuration);
@@ -441,11 +441,11 @@ void main() {
 
       test('should work with a non fake stop watch', () {
         fakeAsync((fake) {
-          final stopWatch = FakeStopwatch();
+          final stopwatch = FakeStopwatch();
 
           // Prepare stopwatch.elapsed
           var time = 0;
-          when(() => stopWatch.elapsed).thenAnswer(
+          when(() => stopwatch.elapsed).thenAnswer(
             (invocation) {
               time += frameDuration.inMicroseconds;
               return Duration(microseconds: time);
@@ -457,7 +457,7 @@ void main() {
 
           timeController = GgTimeController(
             onTimeStamp: (p0) => receivedTimestamps.add(p0),
-            stopWatch: stopWatch,
+            stopwatch: stopwatch,
           );
 
           // Start playing
@@ -465,13 +465,13 @@ void main() {
           expect(timeController.state.value, TransportState.playing);
 
           // Wait for ten frames
-          fake.elapse(GgTimeController.defaultFrameDuration.duration * 10);
+          fake.elapse(GgTimeController.defaultFrameDuration.toDuration * 10);
 
           // Check result
           expect(receivedTimestamps.length, 10);
-          expect(receivedTimestamps[0].duration.inMilliseconds, 16);
-          expect(receivedTimestamps[1].duration.inMilliseconds, 33);
-          expect(receivedTimestamps[2].duration.inMilliseconds, 49);
+          expect(receivedTimestamps[0].toDuration.inMilliseconds, 16);
+          expect(receivedTimestamps[1].toDuration.inMilliseconds, 33);
+          expect(receivedTimestamps[2].toDuration.inMilliseconds, 49);
 
           timeController.dispose();
         });
