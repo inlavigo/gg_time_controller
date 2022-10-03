@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:gg_time_controller/gg_time_controller.dart';
-import 'package:gg_time_controller/src/typedefs.dart';
+import 'package:gg_typedefs/gg_typedefs.dart';
 
 void main() async {
   void log(String str) => print('\n$str:');
@@ -10,7 +10,7 @@ void main() async {
           ((GgTimeController.defaultFrameDuration * 5 * 1000 * 1000).toInt()));
 
   /// Listen to time stamps
-  void onTimeStamp(MilliSeconds timeStamp) {
+  void onTimeStamp(GgMilliseconds timeStamp) {
     scheduleMicrotask(
       () => print('    time: $timeStamp'),
     );
@@ -87,7 +87,7 @@ void main() async {
   log('Animate to 20s within 100ms');
   await timeController.animateTo(
     targetTime: 20.0,
-    animationDuration: const Duration(milliseconds: 100),
+    animationDuration: 0.1,
   );
   await Future.delayed(fiveFrames);
 
@@ -103,7 +103,7 @@ void main() async {
   log('Animate back 10s within 100ms');
   await timeController.animateTo(
     targetTime: 10.0,
-    animationDuration: const Duration(milliseconds: 100),
+    animationDuration: 0.1,
   );
 
   // Output:
