@@ -236,7 +236,7 @@ class GgTimeController {
   void _initTimer(GgPeriodicTimer? timer) {
     if (timer == null) {
       _timer = timer ??
-          GgPeriodicTimer(
+          GgAutoPeriodicTimer(
             onTimerFired: _timerFired,
             interval:
                 Duration(microseconds: (frameDuration * 1000 * 1000).toInt()),

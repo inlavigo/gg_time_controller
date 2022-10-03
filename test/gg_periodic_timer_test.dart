@@ -20,7 +20,7 @@ void main() {
     fake = fk;
     counter = 0;
 
-    periodicTimer = GgPeriodicTimer(
+    periodicTimer = GgAutoPeriodicTimer(
       interval: frameDuration,
       onTimerFired: () => counter++,
     );
@@ -45,7 +45,7 @@ void main() {
     expect(counter, expectedCounter);
   }
 
-  group('PeriodicTimer', () {
+  group('GgAutoPeriodicTimer', () {
     // #########################################################################
     group('start, stop, dispose', () {
       test('should start, stop calling timeFired', () {
@@ -97,6 +97,30 @@ void main() {
           dispose(fake);
         });
       });
+    });
+  });
+
+  group('GgManualPeriodicTimer', () {
+    test('should trigger only if "trigger" is called and timer is running', () {
+      var counter = 0;
+      var expectedCounter = 0;
+      final timer = GgManualPeriodicTimer(
+        onTimerFired: () => counter++,
+      );
+
+      // Call fire -> onTimerFired will not be called because timer is not started.
+      timer.fire();
+      expect(counter, expectedCounter);
+
+      // Start timer
+      timer.start();
+      timer.fire();
+      expect(counter, ++expectedCounter);
+
+      // Stop timer -> fire will not trigger onTimerFired
+      timer.stop();
+      timer.fire();
+      expect(counter, expectedCounter);
     });
   });
 }
