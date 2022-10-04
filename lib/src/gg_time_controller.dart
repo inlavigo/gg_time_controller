@@ -234,13 +234,11 @@ class GgTimeController {
 
   // ...........................................................................
   void _initTimer(GgPeriodicTimer? timer) {
+    _timer =
+        timer ?? GgAutoPeriodicTimer(interval: defaultFrameDuration.toDuration);
+    _timer.addListener(_timerFired);
+
     if (timer == null) {
-      _timer = timer ??
-          GgAutoPeriodicTimer(
-            onTimerFired: _timerFired,
-            interval:
-                Duration(microseconds: (frameDuration * 1000 * 1000).toInt()),
-          );
       _dispose.add(_timer.dispose);
     }
   }

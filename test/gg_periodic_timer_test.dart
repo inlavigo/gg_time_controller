@@ -22,8 +22,8 @@ void main() {
 
     periodicTimer = GgAutoPeriodicTimer(
       interval: frameDuration,
-      onTimerFired: () => counter++,
     );
+    periodicTimer.addListener(() => counter++);
     fake.flushMicrotasks();
   }
 
@@ -104,8 +104,9 @@ void main() {
     test('should trigger only if "trigger" is called and timer is running', () {
       var counter = 0;
       var expectedCounter = 0;
-      final timer = GgManualPeriodicTimer(
-        onTimerFired: () => counter++,
+      final timer = GgPeriodicTimer();
+      timer.addListener(
+        () => counter++,
       );
 
       // Call fire -> onTimerFired will not be called because timer is not started.
@@ -121,6 +122,51 @@ void main() {
       timer.stop();
       timer.fire();
       expect(counter, expectedCounter);
+    });
+  });
+
+  group('addListener, removeListener', () {
+    test('should allow to listen and unlisten to fire events', () {
+      fakeAsync((fake) {
+        var count0 = 0;
+        void listener0() => count0++;
+
+        var count1 = 0;
+        void listener1() => count1++;
+
+        final timer = GgPeriodicTimer();
+        timer.start();
+
+        // Add listener0 to timer
+        timer.addListener(listener0);
+
+        // Let timer fire
+        timer.fire();
+
+        // listener0 has been called, listener1 not, because it is not added
+        expect(count0, 1);
+        expect(count1, 0);
+
+        // Add listener 1 to timer
+        timer.addListener(listener1);
+
+        // Let timer fire
+        timer.fire();
+
+        // Both listeners where called
+        expect(count0, 2);
+        expect(count1, 1);
+
+        // Remove lister 0
+        timer.removeListener(listener0);
+
+        // Let timer fire
+        timer.fire();
+
+        // Only listener1 is fired, because listener0 is removed
+        expect(count0, 2);
+        expect(count1, 2);
+      });
     });
   });
 }

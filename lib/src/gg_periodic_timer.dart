@@ -10,16 +10,35 @@ import 'package:meta/meta.dart';
 
 // .............................................................................
 /// A periodic timer that can be started, stopped and started again
-abstract class GgPeriodicTimer {
-  GgPeriodicTimer({
-    required this.onTimerFired,
-  });
+class GgPeriodicTimer {
+  GgPeriodicTimer();
 
-  /// The callback called when timer fires
-  final void Function() onTimerFired;
+  /// All listeners
+  final listeners = <void Function()>[];
+
+  /// Add a listener that is informed when the timer fires
+  void addListener(void Function() listener) {
+    assert(!listeners.contains(listener));
+    listeners.add(listener);
+  }
+
+  /// Remove a listener added before
+  void removeListener(void Function() listener) {
+    assert(listeners.contains(listener));
+    listeners.remove(listener);
+  }
 
   /// Returns true if timer is running
   bool get isRunning => _isRunning;
+
+  /// Call this method regularly to make the timer fire
+  void fire() {
+    if (isRunning) {
+      for (final listener in listeners) {
+        listener();
+      }
+    }
+  }
 
   /// Start the timer
   @mustCallSuper
@@ -37,6 +56,7 @@ abstract class GgPeriodicTimer {
   /// @mustCallSuper
   void dispose() {
     stop();
+    listeners.clear();
   }
 
   // ######################
@@ -45,26 +65,10 @@ abstract class GgPeriodicTimer {
   bool _isRunning = false;
 }
 
-// .............................................................................
-/// A periodic timer that needs to be triggered from the outside
-class GgManualPeriodicTimer extends GgPeriodicTimer {
-  GgManualPeriodicTimer({
-    required super.onTimerFired,
-  });
-
-  /// Call this method regularly to make the timer fire
-  void fire() {
-    if (isRunning) {
-      super.onTimerFired();
-    }
-  }
-}
-
 // #############################################################################
 /// A periodic timer that can be started, stopped and started again
 class GgAutoPeriodicTimer extends GgPeriodicTimer {
   GgAutoPeriodicTimer({
-    required super.onTimerFired,
     required this.interval,
   });
 
@@ -74,7 +78,7 @@ class GgAutoPeriodicTimer extends GgPeriodicTimer {
   /// Start the timer
   @override
   void start() {
-    _timer ??= Timer.periodic(interval, (_) => onTimerFired());
+    _timer ??= Timer.periodic(interval, (_) => fire());
     super.start();
   }
 
