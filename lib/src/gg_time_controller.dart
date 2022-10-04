@@ -9,8 +9,7 @@ import 'dart:async';
 
 import 'package:gg_typedefs/gg_typedefs.dart';
 import 'package:gg_value/gg_value.dart';
-
-import 'gg_periodic_timer.dart';
+import 'package:gg_periodic_timer/gg_periodic_timer.dart';
 
 // .............................................................................
 /// Different states of the time controller
