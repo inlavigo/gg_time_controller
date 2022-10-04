@@ -27,17 +27,6 @@ enum TransportState {
 typedef OnTimeStamp = Function(GgSeconds);
 
 // .............................................................................
-extension GgDurationExtension on Duration {
-  GgSeconds get secondsD => inMicroseconds / 1000000.0;
-}
-
-// .............................................................................
-extension SecondsToDuration on GgSeconds {
-  Duration get toDuration =>
-      Duration(microseconds: (this * 1000 * 1000).toInt());
-}
-
-// .............................................................................
 /// Delivers time stamps. Can be started, paused, stopped. Jumping as well
 /// animating to a given time is possible.
 class GgTimeController {
@@ -196,7 +185,7 @@ class GgTimeController {
   final List<Function()> _dispose = [];
   GgSeconds _lastTime = 0.0;
   GgSeconds get _clockTime {
-    return _stopwatch.elapsed.secondsD - _stopwatchOffset;
+    return _stopwatch.elapsed.ggSeconds - _stopwatchOffset;
   }
 
   // ...........................................................................
@@ -234,7 +223,7 @@ class GgTimeController {
   // ...........................................................................
   void _initTimer(GgPeriodicTimer? timer) {
     _timer =
-        timer ?? GgAutoPeriodicTimer(interval: defaultFrameDuration.toDuration);
+        timer ?? GgAutoPeriodicTimer(interval: defaultFrameDuration.ggDuration);
     _timer.addListener(_timerFired);
 
     if (timer == null) {
@@ -319,7 +308,7 @@ class GgTimeController {
 
   // ...........................................................................
   void _updateStopwatchOffset(GgSeconds expectedTime) {
-    _stopwatchOffset = _stopwatch.elapsed.secondsD - expectedTime;
+    _stopwatchOffset = _stopwatch.elapsed.ggSeconds - expectedTime;
   }
 }
 

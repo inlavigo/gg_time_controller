@@ -80,7 +80,7 @@ void main() {
 
   // ...........................................................................
   void elapseOneFrame() {
-    fake.elapse(frameDuration.toDuration);
+    fake.elapse(frameDuration.ggDuration);
   }
 
   // ...........................................................................
@@ -352,7 +352,7 @@ void main() {
           // Start animation
           timestamps = [];
           timeController.animateTo(targetTime: changedTargetTime);
-          fake.elapse(animationDuration.toDuration);
+          fake.elapse(animationDuration.ggDuration);
 
           // Check if the right frames are emitted
           final expectedTimestamps = [
@@ -463,13 +463,13 @@ void main() {
           expect(timeController.state.value, TransportState.playing);
 
           // Wait for ten frames
-          fake.elapse(GgTimeController.defaultFrameDuration.toDuration * 10);
+          fake.elapse(GgTimeController.defaultFrameDuration.ggDuration * 10);
 
           // Check result
           expect(receivedTimestamps.length, 10);
-          expect(receivedTimestamps[0].toDuration.inMilliseconds, 10);
-          expect(receivedTimestamps[1].toDuration.inMilliseconds, 20);
-          expect(receivedTimestamps[2].toDuration.inMilliseconds, 30);
+          expect(receivedTimestamps[0].ggDuration.inMilliseconds, 10);
+          expect(receivedTimestamps[1].ggDuration.inMilliseconds, 20);
+          expect(receivedTimestamps[2].ggDuration.inMilliseconds, 30);
 
           timeController.dispose();
 
