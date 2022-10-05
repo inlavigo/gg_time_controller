@@ -13,7 +13,7 @@ import 'package:gg_periodic_timer/gg_periodic_timer.dart';
 
 // .............................................................................
 /// Different states of the time controller
-enum TransportState {
+enum GgTransportState {
   playing,
   paused,
   stopped,
@@ -55,7 +55,7 @@ class GgTimeController {
   final OnTimeStamp onTimeStamp;
 
   /// Returns the transport state as stream
-  GgValueStream<TransportState> get state => _state.stream;
+  GgValueStream<GgTransportState> get state => _state.stream;
 
   /// How often are time stamps emitted?
   final double frameRate;
@@ -68,8 +68,8 @@ class GgTimeController {
 
   /// Starts playing
   void play() {
-    if (_state.value != TransportState.playing) {
-      _state.value = TransportState.playing;
+    if (_state.value != GgTransportState.playing) {
+      _state.value = GgTransportState.playing;
       _timer.start();
       _stopwatch.start();
       _updateStopwatchOffset(_lastTime);
@@ -78,8 +78,8 @@ class GgTimeController {
 
   /// Pauses playing
   void pause() {
-    if (_state.value != TransportState.paused) {
-      _state.value = TransportState.paused;
+    if (_state.value != GgTransportState.paused) {
+      _state.value = GgTransportState.paused;
       _timer.stop();
       if (_lastTime != _clockTime) {
         _lastTime = _clockTime;
@@ -90,8 +90,8 @@ class GgTimeController {
 
   /// Stops playing. Time is set back to 0.
   void stop() {
-    if (_state.value != TransportState.stopped) {
-      _state.value = TransportState.stopped;
+    if (_state.value != GgTransportState.stopped) {
+      _state.value = GgTransportState.stopped;
     }
     _stopwatch.stop();
     _timer.stop();
@@ -110,7 +110,7 @@ class GgTimeController {
     final stateBefore = _state.value;
     _state.value = _jumpState(time);
 
-    _state.value = time == 0.0 ? stateBefore : TransportState.paused;
+    _state.value = time == 0.0 ? stateBefore : GgTransportState.paused;
     _lastTime = time;
     _updateStopwatchOffset(time);
     _timerFired();
@@ -163,8 +163,8 @@ class GgTimeController {
     }
 
     // Switch to paused, if state was stopped before and time is not 0
-    if (stateBefore == TransportState.stopped && _lastTime != 0.0) {
-      _state.value = TransportState.paused;
+    if (stateBefore == GgTransportState.stopped && _lastTime != 0.0) {
+      _state.value = GgTransportState.paused;
     } else {
       _state.value = stateBefore;
     }
@@ -191,10 +191,10 @@ class GgTimeController {
   // ...........................................................................
   GgSeconds get _time {
     switch (state.value) {
-      case TransportState.playing:
+      case GgTransportState.playing:
         return _clockTime;
-      case TransportState.animatingForward:
-      case TransportState.animatingBackward:
+      case GgTransportState.animatingForward:
+      case GgTransportState.animatingBackward:
         return _animatedTime;
       default:
         return _lastTime;
@@ -215,7 +215,8 @@ class GgTimeController {
   // ...........................................................................
   void _timerFired() {
     _animate();
-    _lastTime = state.value == TransportState.playing ? _clockTime : _lastTime;
+    _lastTime =
+        state.value == GgTransportState.playing ? _clockTime : _lastTime;
 
     onTimeStamp(_lastTime);
   }
@@ -237,23 +238,23 @@ class GgTimeController {
   }
 
   // ...........................................................................
-  final _state = GgValue(seed: TransportState.stopped, spam: true);
+  final _state = GgValue(seed: GgTransportState.stopped, spam: true);
   void _initState() {
     _dispose.add(() {
-      _state.value = TransportState.stopped;
+      _state.value = GgTransportState.stopped;
       _state.dispose();
     });
   }
 
   // ...........................................................................
-  TransportState _jumpState(GgSeconds newTime) => newTime > _clockTime
-      ? TransportState.jumpingForward
-      : TransportState.jumpingBackward;
+  GgTransportState _jumpState(GgSeconds newTime) => newTime > _clockTime
+      ? GgTransportState.jumpingForward
+      : GgTransportState.jumpingBackward;
 
   // ...........................................................................
-  TransportState _animateState(GgSeconds newTime) => newTime > _clockTime
-      ? TransportState.animatingForward
-      : TransportState.animatingBackward;
+  GgTransportState _animateState(GgSeconds newTime) => newTime > _clockTime
+      ? GgTransportState.animatingForward
+      : GgTransportState.animatingBackward;
 
   // ...........................................................................
   GgSeconds _animationTargetTime = 0;
@@ -263,7 +264,7 @@ class GgTimeController {
 
   // ...........................................................................
   GgSeconds get _animatedTime {
-    final animatingForward = state.value == TransportState.animatingForward;
+    final animatingForward = state.value == GgTransportState.animatingForward;
     final duration = animatingForward
         ? _animationTargetTime - _animationStartTime
         : _animationStartTime - _animationTargetTime;

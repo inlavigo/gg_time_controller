@@ -17,7 +17,7 @@ void main() async {
   }
 
   /// Listen to state changes
-  void onStateChange(TransportState state) {
+  void onStateChange(GgTransportState state) {
     print('  state: ${state.toString().split('.').last}');
   }
 
