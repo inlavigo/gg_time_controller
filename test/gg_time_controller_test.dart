@@ -5,7 +5,6 @@
 // found in the LICENSE file in the root of this package.
 
 import 'package:fake_async/fake_async.dart';
-import 'package:gg_fake_stopwatch/gg_fake_stopwatch.dart';
 import 'package:gg_time_controller/src/gg_time_controller.dart';
 import 'package:gg_typedefs/gg_typedefs.dart';
 import 'package:test/expect.dart';
@@ -25,7 +24,7 @@ void main() {
 
   // ...........................................................................
   void init(FakeAsync fk) {
-    stopwatch = GgFakeStopwatch(fakeAsync: fk);
+    stopwatch = fk.getClock(DateTime(0)).stopwatch();
     timestamps = [];
 
     timeController = exampleTimeController(

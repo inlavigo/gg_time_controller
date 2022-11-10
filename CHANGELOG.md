@@ -1,3 +1,3 @@
-## 1.0.0+beta.7
+## 1.0.0+beta.8
 
-- Initial version.
+- Remove dependency from gg_fake_stopwatch
