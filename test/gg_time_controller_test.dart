@@ -74,6 +74,7 @@ void main() {
     fake.flushMicrotasks();
     expect(timeStamp, closeTo(expected, 0.1));
     expect(timeController.time, closeTo(expected, 0.1));
+    expect(timeController.timeStream.value, closeTo(expected, 0.1));
     states.clear();
   }
 

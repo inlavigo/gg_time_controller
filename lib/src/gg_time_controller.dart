@@ -66,6 +66,9 @@ class GgTimeController {
   /// Returns the current time in seconds.
   GgSeconds get time => _time;
 
+  /// Returns a stream that deliveres a new time stamp on each update
+  GgValueStream<GgSeconds> get timeStream => _timeGgVal.stream;
+
   /// Starts playing
   void play() {
     if (_state.value != GgTransportState.playing) {
@@ -189,6 +192,12 @@ class GgTimeController {
   }
 
   // ...........................................................................
+  late GgValue<GgSeconds> _timeGgVal;
+  void _initTimeGgVal() {
+    _timeGgVal = GgValue<GgSeconds>(seed: _time);
+  }
+
+  // ...........................................................................
   GgSeconds get _time {
     switch (state.value) {
       case GgTransportState.playing:
@@ -210,6 +219,7 @@ class GgTimeController {
   void _init() {
     _dispose.add(() {});
     _initState();
+    _initTimeGgVal();
   }
 
   // ...........................................................................
@@ -218,6 +228,7 @@ class GgTimeController {
     _lastTime =
         state.value == GgTransportState.playing ? _clockTime : _lastTime;
 
+    _timeGgVal.value = _lastTime;
     onTimeStamp(_lastTime);
   }
 

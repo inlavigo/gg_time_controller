@@ -1,3 +1,3 @@
-## 1.0.0+beta.8
+## 1.0.0+beta.9
 
-- Remove dependency from gg_fake_stopwatch
+- Add `timeStream`
