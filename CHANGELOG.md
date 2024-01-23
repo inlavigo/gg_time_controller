@@ -1,3 +1,5 @@
-## 1.0.0+beta.9
+# Change Log
 
-- Add `timeStream`
+## 1.0.1
+
+- Initial Version

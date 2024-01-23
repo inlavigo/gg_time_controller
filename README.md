@@ -6,13 +6,13 @@ In media player apps like video players, time control is needed. We need to be
 able to play, stop, forward, and backward time. Exactly this is realized with
 `GgTimeController`.
 
-* Delivers time stamps on a frame basis
-* `start`, `stop`, `pause` delivering time stamps.
-* Animate or jump to a given time using `animateTo` and `jumpTo`
+- Delivers time stamps on a frame basis
+- `start`, `stop`, `pause` delivering time stamps.
+- Animate or jump to a given time using `animateTo` and `jumpTo`
 
 ## Example
 
-~~~dart
+```dart
 // Create a callback listening to time stamps
 final timeController = GgTimeController(onTimeStamp: (timeStamp){
   print('time: ${timeStamp.time.inMilliseconds}')
@@ -27,7 +27,7 @@ timeController.state.listen((state){
 timeController.play();
 
 /// Wait for five frames
-await Future.delayed(GgTimeController.defaultFrameDuration * 5);
+await Future<void>.delayed(GgTimeController.defaultFrameDuration * 5);
 
 /// Pause playing
 timeController.play();
@@ -40,7 +40,7 @@ timeController.animateTo(time: const Duration(seconds: 10));
 
 // Stop
 timeController.stop();
-~~~
+```
 
 ## Getting started
 

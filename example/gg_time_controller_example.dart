@@ -6,8 +6,9 @@ import 'package:gg_typedefs/gg_typedefs.dart';
 void main() async {
   void log(String str) => print('\n$str:');
   final fiveFrames = Duration(
-      microseconds:
-          ((GgTimeController.defaultFrameDuration * 5 * 1000 * 1000).toInt()));
+    microseconds:
+        ((GgTimeController.defaultFrameDuration * 5 * 1000 * 1000).toInt()),
+  );
 
   /// Listen to time stamps
   void onTimeStamp(GgMilliseconds timeStamp) {
@@ -29,7 +30,7 @@ void main() async {
   timeController.play();
 
   log('Wait for five frames');
-  await Future.delayed(fiveFrames);
+  await Future<void>.delayed(fiveFrames);
 
   // Output:
   //   state: playing
@@ -46,14 +47,14 @@ void main() async {
   //   time: 85
 
   log('Wait for five frames => No output because controller is paused');
-  await Future.delayed(fiveFrames);
+  await Future<void>.delayed(fiveFrames);
 
   // Output:
   //   state: paused
 
   log('Stop the controller. Time will be set back to 0');
   timeController.stop();
-  await Future.delayed(Duration.zero);
+  await Future<void>.delayed(Duration.zero);
 
   // Output:
   //   state: stopped
@@ -61,7 +62,7 @@ void main() async {
 
   log('Jump to 10s');
   timeController.jumpTo(time: 10.0);
-  await Future.delayed(Duration.zero);
+  await Future<void>.delayed(Duration.zero);
 
   // Output:
   //   time: 1000000
@@ -71,7 +72,7 @@ void main() async {
 
   log('Wait for five frames');
 
-  await Future.delayed(fiveFrames);
+  await Future<void>.delayed(fiveFrames);
   timeController.pause();
 
   // Output:
@@ -89,7 +90,7 @@ void main() async {
     targetTime: 20.0,
     animationDuration: 0.1,
   );
-  await Future.delayed(fiveFrames);
+  await Future<void>.delayed(fiveFrames);
 
   // Output:
   //   state: animatingForward

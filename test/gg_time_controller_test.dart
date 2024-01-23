@@ -96,7 +96,7 @@ void main() {
       });
     });
 
-    // ...........................................................................
+    // .........................................................................
     group('play, pause, stop', () {
       test('should deliver state changes as well the right time stamps', () {
         fakeAsync((fake) {
@@ -218,7 +218,9 @@ void main() {
           // .................
           // Animating forward
           timeController.animateTo(
-              targetTime: targetTime, animationDuration: animationDuration);
+            targetTime: targetTime,
+            animationDuration: animationDuration,
+          );
 
           // should set the state to "animatingForward"
           expectState(GgTransportState.animatingForward);
@@ -323,7 +325,9 @@ void main() {
           // Animating forward
           const animationDuration = GgTimeController.defaultAnimationDuration;
           timeController.animateTo(
-              targetTime: targetTime, animationDuration: animationDuration);
+            targetTime: targetTime,
+            animationDuration: animationDuration,
+          );
 
           // should set the state to "animatingForward"
           expectState(GgTransportState.animatingForward);

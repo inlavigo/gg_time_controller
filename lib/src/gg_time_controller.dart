@@ -14,23 +14,38 @@ import 'package:gg_periodic_timer/gg_periodic_timer.dart';
 // .............................................................................
 /// Different states of the time controller
 enum GgTransportState {
+  /// Playing
   playing,
+
+  /// Paused
   paused,
+
+  /// Stopped
   stopped,
+
+  /// Jumping forward
   jumpingForward,
+
+  /// Jumping backward
   jumpingBackward,
+
+  /// Animating forward
   animatingForward,
+
+  /// Animating backward
   animatingBackward,
 }
 
 // .............................................................................
-typedef OnTimeStamp = Function(GgSeconds);
+/// Callback that is called on time stamp changesMi
+typedef OnTimeStamp = void Function(GgSeconds);
 
 // .............................................................................
 /// Delivers time stamps. Can be started, paused, stopped. Jumping as well
 /// animating to a given time is possible.
 class GgTimeController {
   // ...........................................................................
+  /// Constructor
   GgTimeController({
     required this.onTimeStamp,
     this.frameRate = defaultFrameRate,
@@ -185,7 +200,7 @@ class GgTimeController {
   // ######################
 
   // ...........................................................................
-  final List<Function()> _dispose = [];
+  final List<void Function()> _dispose = [];
   GgSeconds _lastTime = 0.0;
   GgSeconds get _clockTime {
     return _stopwatch.elapsed.ggSeconds - _stopwatchOffset;
@@ -271,7 +286,7 @@ class GgTimeController {
   GgSeconds _animationTargetTime = 0;
   GgSeconds _animationDuration = 0;
   GgSeconds _animationStartTime = 0;
-  Completer? _isAnimating;
+  Completer<void>? _isAnimating;
 
   // ...........................................................................
   GgSeconds get _animatedTime {
@@ -294,7 +309,7 @@ class GgTimeController {
     return result;
   }
 
-  // ........................................................ ...................
+  // ...........................................................................
   void _animate() {
     if (_isAnimating == null) {
       return;
@@ -325,6 +340,7 @@ class GgTimeController {
 }
 
 // #############################################################################
+/// Create an example time controller for test purposes
 GgTimeController exampleTimeController({
   OnTimeStamp? onTimeStamp,
   Stopwatch? stopwatch,
