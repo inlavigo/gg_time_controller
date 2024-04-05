@@ -1,5 +1,13 @@
-# Change Log
+# Changelog
 
-## 1.0.1
+## [Unreleased]
+
+### Changed
+
+- Rework changelog + repository URL in pubspec.yaml
+
+## 1.0.1 - 2024-01-01
 
 - Initial Version
+
+[Unreleased]: https://github.com/inlavigo/gg_time_controller/compare/1.0.1...HEAD
