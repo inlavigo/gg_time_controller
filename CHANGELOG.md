@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.2] - 2024-04-09
 
 ### Changed
 
@@ -8,8 +8,4 @@
 - 'Github Actions Pipeline'
 - 'Github Actions Pipeline: Add SDK file containing flutter into .github/workflows to make github installing flutter and not dart SDK'
 
-## 1.0.1 - 2024-01-01
-
-- Initial Version
-
-[Unreleased]: https://github.com/inlavigo/gg_time_controller/compare/1.0.1...HEAD
+[1.0.2]: https://github.com/inlavigo/gg_time_controller/tag/%tag
