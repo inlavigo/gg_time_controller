@@ -5,6 +5,7 @@
 ### Removed
 
 - dependency to gg\_install\_gg, remove ./check script
+- dependency to gg\_install\_gg, remove ./check script
 
 ## [1.0.3] - 2024-04-09
 
