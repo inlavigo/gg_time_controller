@@ -1,6 +1,6 @@
 name: gg_time_controller
 description: A time controller for media players with play, pause, stop, jumpTo and animateTo methods.
-version: 1.0.4
+version: 1.0.5
 repository: https://github.com/inlavigo/gg_time_controller
 
 environment:
